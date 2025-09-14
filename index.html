@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LectureLab AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Lora', 'serif'],
+            },
+            colors: {
+              slate: {
+                ...tailwind.theme.colors.slate,
+                850: '#172033',
+                950: '#090e1a',
+              },
+              cyan: tailwind.theme.colors.cyan,
+              amber: tailwind.theme.colors.amber,
+            },
+            animation: {
+              'text-focus-in': 'text-focus-in 1s cubic-bezier(0.550, 0.085, 0.680, 0.530) both',
+              'fade-in': 'fade-in 0.5s ease-out forwards',
+            },
+            keyframes: {
+              'text-focus-in': {
+                '0%': { filter: 'blur(12px)', opacity: '0' },
+                '100%': { filter: 'blur(0px)', opacity: '1' },
+              },
+              'fade-in': {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+            },
+          },
+        },
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.19.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/"
+  }
+}
+</script>
+</head>
+  <body class="bg-slate-950 font-sans text-slate-200">
+    <div class="fixed inset-0 z-[-1] opacity-20">
+      <svg class="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <defs>
+          <pattern id="pattern-a5676949-8874-42b7-9512-5f3333f2c5d0" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="translate(10.5 10.5) rotate(0) scale(1)">
+            <circle id="pattern-circle" cx="1" cy="1" r="1" fill="#22d3ee"></circle>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" stroke="none" fill="url(#pattern-a5676949-8874-42b7-9512-5f3333f2c5d0)"></rect>
+      </svg>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
