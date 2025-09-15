@@ -1,9 +1,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { ModuleData, ProblemSolvingChallenge, YouTubeVideo } from '../types';
 
-// Fix: Per @google/genai guidelines, the API key must be read from process.env.API_KEY
-// and the client should be initialized directly with it. It is assumed to be available.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// This is the correct way to access environment variables in a Vite project.
+// The build process will replace this with the actual key.
+const apiKey = import.meta.env.VITE_API_KEY;
+if (!apiKey) {
+  throw new Error("VITE_API_KEY is not set in the environment.");
+}
+const ai = new GoogleGenAI({ apiKey });
 
 const fileToGenerativePart = async (file: File) => {
   const base64EncodedDataPromise = new Promise<string>((resolve) => {
