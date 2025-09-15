@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { ModuleData, ProblemSolvingChallenge, YouTubeVideo } from '../types';
 
@@ -10,15 +11,30 @@ if (!apiKey) {
 const ai = new GoogleGenAI({ apiKey });
 
 const fileToGenerativePart = async (file: File) => {
-  const base64EncodedDataPromise = new Promise<string>((resolve) => {
+  const base64EncodedDataPromise = new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
-    reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
+    reader.onloadend = () => {
+      const result = reader.result as string;
+      if (result) {
+        // Find the comma that separates the metadata from the base64 data
+        const base64Data = result.substring(result.indexOf(',') + 1);
+        resolve(base64Data);
+      } else {
+        // If result is null, it's because an error occurred.
+        reject(reader.error || new Error('File could not be read. The result is empty.'));
+      }
+    };
+    reader.onerror = () => {
+      reject(reader.error || new Error('An unknown error occurred while reading the file.'));
+    };
     reader.readAsDataURL(file);
   });
+
   return {
     inlineData: { data: await base64EncodedDataPromise, mimeType: file.type },
   };
 };
+
 
 export const transcribeFile = async (file: File): Promise<string> => {
     try {
