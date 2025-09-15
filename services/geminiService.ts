@@ -1,4 +1,5 @@
 
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { ModuleData, ProblemSolvingChallenge, YouTubeVideo } from '../types';
 
@@ -204,10 +205,10 @@ export const generateModuleData = async (transcription: string): Promise<ModuleD
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 export const generateImage = async (prompt: string): Promise<string> => {
-    let retries = 3;
+    let lastError: Error | null = null;
     let backoff = 1000;
 
-    while (retries > 0) {
+    for (let i = 0; i < 3; i++) { // 3 attempts total
         try {
             const response = await ai.models.generateImages({
                 model: 'imagen-4.0-generate-001',
@@ -220,28 +221,25 @@ export const generateImage = async (prompt: string): Promise<string> => {
             });
 
             if (!response.generatedImages || response.generatedImages.length === 0) {
-                throw new Error("Image generation failed, no images returned.");
+                throw new Error("Image generation failed, the API returned no images.");
             }
+            
             const base64ImageBytes: string = response.generatedImages[0].image.imageBytes;
             return `data:image/png;base64,${base64ImageBytes}`;
+
         } catch (error) {
-            if (error instanceof Error && error.message.includes('429') && retries > 0) {
-                console.warn(`Rate limit hit for image generation. Retrying in ${backoff}ms... (${retries - 1} retries left)`);
+            lastError = error instanceof Error ? error : new Error(String(error));
+            console.error(`Image generation attempt ${i + 1} failed:`, lastError.message);
+            if (i < 2) { // Don't wait after the last attempt
+                console.warn(`Retrying in ${backoff}ms...`);
                 await delay(backoff);
-                retries--;
                 backoff *= 2; // Exponential backoff
-            } else {
-                console.error("Error generating image:", error);
-                if (error instanceof Error) {
-                    throw new Error(`Failed to generate image: ${error.message}`);
-                }
-                throw new Error("An unknown error occurred during image generation.");
             }
         }
     }
     
-    // If all retries fail, throw an error.
-    throw new Error("Failed to generate image after multiple retries due to rate limiting.");
+    console.error("Failed to generate image after 3 attempts.");
+    throw new Error(`Failed to generate image. Last error: ${lastError?.message || 'Unknown error'}`);
 };
 
 export const evaluateSolution = async (conceptTitle: string, challenge: ProblemSolvingChallenge, userSolution: string): Promise<string> => {
