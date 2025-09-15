@@ -1,13 +1,9 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { ModuleData, ProblemSolvingChallenge, YouTubeVideo } from '../types';
 
-const API_KEY = process.env.API_KEY;
-
-if (!API_KEY) {
-    throw new Error("API_KEY environment variable not set");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+// Fix: Per @google/genai guidelines, the API key must be read from process.env.API_KEY
+// and the client should be initialized directly with it. It is assumed to be available.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const fileToGenerativePart = async (file: File) => {
   const base64EncodedDataPromise = new Promise<string>((resolve) => {
